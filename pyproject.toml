@@ -3,11 +3,12 @@ name = "maddr-api"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "lucas.harmatiuk",email = "lucasjharmatiuk@gmail.com"}
+    {name = "lucas.harmatiuk"}
 ]
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.13,<4.0"
 dependencies = [
+    "fastapi[standard] (>=0.119.0,<0.120.0)"
 ]
 
 [tool.poetry]
@@ -16,3 +17,32 @@ packages = [{include = "maddr_api", from = "src"}]
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "pytest (>=8.4.2,<9.0.0)",
+    "pytest-cov (>=7.0.0,<8.0.0)",
+    "taskipy (>=1.14.1,<2.0.0)",
+    "ruff (>=0.14.1,<0.15.0)"
+]
+
+[tool.ruff]
+line-length = 79
+
+[tool.ruff.lint]
+preview = true
+
+[tool.ruff.format]
+preview = true
+
+[tool.pytest.ini_options]
+pythonpath = "."
+
+[tool.taskipy.tasks]
+lint = 'ruff check'
+pre_format = 'ruff check --fix'
+format = 'ruff format'
+run = 'fastapi dev src/maddr_api/app.py'
+pre_test = 'task lint'
+test = 'pytest -s -x --cov=src/maddr_api -vv'
+post_test = 'coverage html'
