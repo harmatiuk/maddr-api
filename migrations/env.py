@@ -8,7 +8,6 @@ from maddr_api.models.account import table_registry
 from maddr_api.config.settings import Settings
 
 
-
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
