@@ -6,17 +6,17 @@ from maddr_api.models.account import Account
 
 class AccountService(AppCRUD):
     def create_account(self, account_data: AccountCreate) -> Account:
-        check_if_existing_account = self.session.scalar(
+        account_exists = self.session.scalar(
             select(Account).where(
                 (Account.username == account_data.username)
                 | (Account.email == account_data.email)
             )
         )
 
-        if check_if_existing_account:
-            if account_data.username == check_if_existing_account.username:
+        if account_exists:
+            if account_data.username == account_exists.username:
                 raise ValueError("Username already exists.")
-            if account_data.email == check_if_existing_account.email:
+            if account_data.email == account_exists.email:
                 raise ValueError("Email already exists.")
 
         new_account = Account(
