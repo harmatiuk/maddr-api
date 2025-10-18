@@ -7,7 +7,7 @@ router = APIRouter(prefix="/account", tags=["account"])
 @router.post(
     "/",
     summary="Create a new account",
-    description="Create a new account with the provided details.",
+    description="Create a new account with the provided data.",
     status_code=HTTPStatus.CREATED,
 )
 def create_account():
