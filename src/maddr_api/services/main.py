@@ -1,12 +1,6 @@
-from maddr_api.config.database import get_sesion as Session
+from maddr_api.config.database import get_sesion
 
 
-class DatabaseService(object):
-    def __init__(self, session: Session):
+class DatabaseSession(object):
+    def __init__(self, session: get_sesion):
         self.session = session
-
-
-class AppService(DatabaseService): ...
-
-
-class AppCRUD(DatabaseService): ...

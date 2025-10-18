@@ -1,10 +1,10 @@
 from maddr_api.schemas.account import AccountCreate
-from maddr_api.services.main import AppCRUD
+from maddr_api.services.main import DatabaseSession
 from sqlalchemy import select
 from maddr_api.models.account import Account
 
 
-class AccountService(AppCRUD):
+class AccountService(DatabaseSession):
     def create_account(self, account_data: AccountCreate) -> Account:
         account_exists = self.session.scalar(
             select(Account).where(
