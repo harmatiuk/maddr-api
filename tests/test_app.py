@@ -5,6 +5,7 @@ from maddr_api.app import app
 
 client = TestClient(app)
 
+
 def test_read_root():
     response = client.get("/")
     assert response.status_code == HTTPStatus.OK
