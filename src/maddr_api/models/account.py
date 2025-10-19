@@ -9,6 +9,9 @@ table_registry = registry()
 
 @table_registry.mapped_as_dataclass
 class Account:
+    """
+    Database model for an account.
+    """
     __tablename__ = "account"
 
     id: Mapped[int] = mapped_column(
