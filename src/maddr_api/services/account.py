@@ -8,11 +8,12 @@ class AccountService(DatabaseSession):
     """
     Service class for account operations.
     """
+
     def create_account(self, account_data: AccountCreate) -> Account:
         """
         Create a new account in the database.
         """
-        
+
         account_exists = self.session.scalar(
             select(Account).where(
                 (Account.username == account_data.username)

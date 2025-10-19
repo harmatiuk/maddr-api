@@ -14,7 +14,9 @@ router = APIRouter(prefix="/account", tags=["account"])
     status_code=HTTPStatus.CREATED,
     response_model=AccountPublic,
 )
-def create_account(account_data: AccountCreate, db=Depends(get_sesion)) -> AccountPublic | ValueError:
+def create_account(
+    account_data: AccountCreate, db=Depends(get_sesion)
+) -> AccountPublic | ValueError:
     new_account = AccountService(db).create_account(account_data)
-    if new_account:
-        return new_account
+
+    return new_account
