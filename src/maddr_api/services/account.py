@@ -1,3 +1,5 @@
+from http import HTTPStatus
+from fastapi import HTTPException
 from maddr_api.schemas.account import AccountCreate
 from maddr_api.services.main import DatabaseSession
 from sqlalchemy import select
@@ -23,9 +25,16 @@ class AccountService(DatabaseSession):
 
         if account_exists:
             if account_data.username == account_exists.username:
-                raise ValueError("Username already exists.")
+                raise HTTPException(
+                    status_code=HTTPStatus.CONFLICT,
+                    detail="Username already exists.",
+                )
+
             if account_data.email == account_exists.email:
-                raise ValueError("Email already exists.")
+                raise HTTPException(
+                    status_code=HTTPStatus.CONFLICT,
+                    detail="Email already exists.",
+                )
 
         new_account = Account(
             username=account_data.username,
