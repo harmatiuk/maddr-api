@@ -56,21 +56,21 @@ class AccountService(AccountCRUD):
         Create a new account after checking for existing username and email.
         """
 
-        account_emaill_exists = self.read_account(
+        email_already_exists = self.read_account(
             AccountSearchField.EMAIL, account_data.email
         )
 
-        if account_emaill_exists:
+        if email_already_exists:
             raise HTTPException(
                 status_code=HTTPStatus.CONFLICT,
                 detail="Email already exists.",
             )
 
-        account_username_exists = self.read_account(
+        username_already_exists = self.read_account(
             AccountSearchField.USERNAME, account_data.username
         )
 
-        if account_username_exists:
+        if username_already_exists:
             raise HTTPException(
                 status_code=HTTPStatus.CONFLICT,
                 detail="Username already exists.",
