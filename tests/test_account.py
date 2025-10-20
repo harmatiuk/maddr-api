@@ -54,3 +54,65 @@ def test_create_account_with_existing_email(client, account):
 
     assert response.status_code == HTTPStatus.CONFLICT
     assert response.json() == {"detail": "Email already exists."}
+
+
+def test_create_account_with_wrong_email_format(client):
+    """
+    Test creating an account with an invalid email format.
+    """
+
+    account_data = dict(
+        username="test_create_account_with_wrong_email_format",
+        email="invalid-email-format",
+        password="testpass",
+    )
+
+    response = client.post("/account/", json=account_data)
+
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert response.json()["detail"][0]["msg"] == "value is not a valid email address: An email address must have an @-sign."
+
+def test_create_account_with_missing_email_field(client):
+    """
+    Test creating an account with missing email field.
+    """
+    
+    account_data = dict(
+        username="test_create_account_with_missing_email_field",
+        password="testpass",
+    )
+
+    response = client.post("/account/", json=account_data)
+
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert response.json()["detail"][0]["msg"] == "Field required"
+
+def test_create_account_with_missing_username_field(client):
+    """
+    Test creating an account with missing username field.
+    """
+
+    account_data = dict(
+        email="test_create_account_with_missing_username_field@gmail.com",
+        password="testpass"
+    )
+    
+    response = client.post("/account/", json=account_data)
+
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert response.json()["detail"][0]["msg"] == "Field required"
+
+def test_create_account_with_missing_password_field(client):
+    """
+    Test creating an account with missing password field.
+    """
+
+    account_data = dict(
+        username="test_create_account_with_missing_password_field",
+        email="test_create_account_with_missing_password_field@gmail.com"
+    )
+
+    response = client.post("/account/", json=account_data)
+    
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert response.json()["detail"][0]["msg"] == "Field required"
