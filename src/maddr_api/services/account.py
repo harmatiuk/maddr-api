@@ -4,44 +4,78 @@ from maddr_api.schemas.account import AccountCreate
 from maddr_api.services.main import DatabaseSession
 from sqlalchemy import select
 from maddr_api.models.account import Account
+from maddr_api.services.main import AccountSearchField
+from typing import Union
 
 
-class AccountService(DatabaseSession):
+class AccountCRUD(DatabaseSession):
     """
-    Service class for account operations.
+    CRUD operations for accounts.
     """
 
-    def create_account(self, account_data: AccountCreate) -> Account:
+    def crete_account(self, account_data: AccountCreate) -> Account:
         """
         Create a new account in the database.
         """
-
-        account_exists = self.session.scalar(
-            select(Account).where(
-                (Account.username == account_data.username)
-                | (Account.email == account_data.email)
-            )
-        )
-
-        if account_exists:
-            if account_data.username == account_exists.username:
-                raise HTTPException(
-                    status_code=HTTPStatus.CONFLICT,
-                    detail="Username already exists.",
-                )
-
-            if account_data.email == account_exists.email:
-                raise HTTPException(
-                    status_code=HTTPStatus.CONFLICT,
-                    detail="Email already exists.",
-                )
 
         new_account = Account(
             username=account_data.username,
             email=account_data.email,
             password=account_data.password,
         )
+
         self.session.add(new_account)
         self.session.commit()
         self.session.refresh(new_account)
+
+        return new_account
+
+    def read_account(
+        self, search_field: AccountSearchField, value: Union[str, int]
+    ) -> Account | None:
+        """
+        Read an account from the database by a specific field.
+        """
+
+        account_data = self.session.scalar(
+            select(Account).where(
+                getattr(Account, search_field.value) == value
+            )
+        )
+
+        return account_data
+
+
+class AccountService(AccountCRUD):
+    """
+    Service layer for account operations.
+    """
+
+    def create_account(self, account_data: AccountCreate) -> Account:
+        """
+        Create a new account after checking for existing username and email.
+        """
+
+        account_emaill_exists = self.read_account(
+            AccountSearchField.EMAIL, account_data.email
+        )
+
+        if account_emaill_exists:
+            raise HTTPException(
+                status_code=HTTPStatus.CONFLICT,
+                detail="Email already exists.",
+            )
+
+        account_username_exists = self.read_account(
+            AccountSearchField.USERNAME, account_data.username
+        )
+
+        if account_username_exists:
+            raise HTTPException(
+                status_code=HTTPStatus.CONFLICT,
+                detail="Username already exists.",
+            )
+
+        new_account = self.crete_account(account_data)
+
         return new_account
