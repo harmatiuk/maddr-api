@@ -57,7 +57,7 @@ class AccountService(AccountCRUD):
         """
 
         email_already_exists = self.read_account(
-            AccountSearchField.EMAIL, account_data.email
+            search_field=AccountSearchField.EMAIL, value=account_data.email
         )
 
         if email_already_exists:
@@ -67,7 +67,7 @@ class AccountService(AccountCRUD):
             )
 
         username_already_exists = self.read_account(
-            AccountSearchField.USERNAME, account_data.username
+            search_field=AccountSearchField.USERNAME, value=account_data.username
         )
 
         if username_already_exists:
