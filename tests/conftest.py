@@ -7,7 +7,7 @@ from sqlalchemy import event
 from contextlib import contextmanager
 from datetime import datetime
 from maddr_api.app import app
-from maddr_api.config.database import get_sesion
+from maddr_api.config.database import DatabaseSession
 from maddr_api.models.account import Account, table_registry
 
 
@@ -42,7 +42,9 @@ def client(session):
         return session
 
     with TestClient(app) as client:
-        app.dependency_overrides[get_sesion] = override_get_session
+        app.dependency_overrides[DatabaseSession.get_sesion] = (
+            override_get_session
+        )
         yield client
 
     app.dependency_overrides.clear()
