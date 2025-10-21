@@ -15,8 +15,7 @@ router = APIRouter(prefix="/account", tags=["account"])
     response_model=AccountPublic,
 )
 def create_account(
-    account_data: AccountCreate, db=Depends(DatabaseSession.get_sesion)
+    account_data: AccountCreate,
+    session: DatabaseSession = Depends(DatabaseSession.get_session),
 ) -> AccountPublic | ValueError:
-    new_account = AccountService(db).create_account(account_data)
-
-    return new_account
+    return AccountService(session).create_account(account_data)

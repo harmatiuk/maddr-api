@@ -14,7 +14,7 @@ class DatabaseSession:
     )
 
     @staticmethod
-    def get_sesion():
+    def get_session():
         """
         Provide a database session.
         Use as dependency: Depends(DatabaseSession.get_sesion)

@@ -42,7 +42,7 @@ def client(session):
         return session
 
     with TestClient(app) as client:
-        app.dependency_overrides[DatabaseSession.get_sesion] = (
+        app.dependency_overrides[DatabaseSession.get_session] = (
             override_get_session
         )
         yield client
