@@ -17,7 +17,7 @@ class DatabaseSession:
     def get_session():
         """
         Provide a database session.
-        Use as dependency: Depends(DatabaseSession.get_sesion)
+        Use as dependency: Depends(DatabaseSession.get_session)
         """
         with Session(DatabaseSession.engine) as session:
             yield session
