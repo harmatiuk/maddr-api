@@ -6,6 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 ModelType = TypeVar("ModelType")
 CreateSchemaType = TypeVar("CreateSchemaType")
+UpdateSchemaType = TypeVar("UpdateSchemaType")
 
 
 class BaseCRUD(Generic[ModelType, CreateSchemaType]):
@@ -44,6 +45,26 @@ class BaseCRUD(Generic[ModelType, CreateSchemaType]):
 
         return record
 
+    def update(
+        self, id_column: str, value: Any, update_data: UpdateSchemaType
+    ) -> Optional[ModelType]:
+        """
+        Update a record in the database by a specific id field.
+        """
+
+        record = self.read(search_field=id_column, value=value)
+
+        if not record:
+            return False
+
+        for field, field_value in update_data.model_dump().items():
+            setattr(record, field, field_value)
+
+        self.session.commit()
+        self.session.refresh(record)
+
+        return record
+
     def delete(self, id_column: str, value: Any) -> bool:
         """
         Delete a record from the database by a specific id field.
@@ -53,10 +74,10 @@ class BaseCRUD(Generic[ModelType, CreateSchemaType]):
             record = self.read(search_field=id_column, value=value)
             self.session.delete(record)
             self.session.commit()
-            return True  
+            return True
         except SQLAlchemyError:
             self.session.rollback()
-            return False 
+            return False
 
 
 class AccountSearchField(str, Enum):
