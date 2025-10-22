@@ -1,7 +1,11 @@
 from fastapi import APIRouter, Depends
 from maddr_api.config.database import DatabaseSession
 from http import HTTPStatus
-from maddr_api.schemas.account import AccountCreate, AccountPublic, AccountMessageResponse
+from maddr_api.schemas.account import (
+    AccountCreate,
+    AccountPublic,
+    AccountMessageResponse,
+)
 from maddr_api.services.account import AccountService
 
 router = APIRouter(prefix="/account", tags=["account"])
@@ -19,6 +23,21 @@ def create_account(
     session: DatabaseSession = Depends(DatabaseSession.get_session),
 ) -> AccountPublic:
     return AccountService(session).create_account(account_data)
+
+
+@router.put(
+    "/{account_id}",
+    summary="Update an account",
+    description="Update an existing account by its ID.",
+    status_code=HTTPStatus.OK,
+    response_model=AccountPublic,
+)
+def update_account(
+    account_id: int,
+    account_data: AccountCreate,
+    session: DatabaseSession = Depends(DatabaseSession.get_session),
+) -> AccountPublic:
+    return AccountService(session).update_account(account_id, account_data)
 
 
 @router.delete(

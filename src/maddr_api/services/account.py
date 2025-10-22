@@ -35,6 +35,27 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
 
         return self.create(account_data)
 
+    def update_account(
+        self, account_id: int, account_data: AccountCreate
+    ) -> Account:
+        """
+        Update an existing account by its ID.
+        """
+
+        account = self.update(
+            id_column="id",
+            value=account_id,
+            update_data=account_data,
+        )
+
+        if not account:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail="Account not found.",
+            )
+
+        return account
+
     def delete_account(self, account_id: int) -> AccountMessageResponse:
         """
         Delete an account by its ID.
