@@ -1,6 +1,6 @@
 from http import HTTPStatus
 from fastapi import HTTPException
-from maddr_api.schemas.account import AccountCreate
+from maddr_api.schemas.account import AccountCreate, AccountMessageResponse
 from maddr_api.models.account import Account
 from maddr_api.services.main import AccountSearchField
 from maddr_api.services.main import BaseCRUD
@@ -34,3 +34,17 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
                 )
 
         return self.create(account_data)
+
+    def delete_account(self, account_id: int) -> AccountMessageResponse:
+        """
+        Delete an account by its ID.
+        """
+
+        success = self.delete(id_column="id", value=account_id)
+        if not success:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail="Account not found.",
+            )
+
+        return AccountMessageResponse(message="Account deleted successfully.")

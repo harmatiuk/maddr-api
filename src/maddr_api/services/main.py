@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Generic, TypeVar, Type, Optional, Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-
+from sqlalchemy.exc import SQLAlchemyError
 
 ModelType = TypeVar("ModelType")
 CreateSchemaType = TypeVar("CreateSchemaType")
@@ -43,6 +43,20 @@ class BaseCRUD(Generic[ModelType, CreateSchemaType]):
         )
 
         return record
+
+    def delete(self, id_column: str, value: Any) -> bool:
+        """
+        Delete a record from the database by a specific id field.
+        """
+
+        try:
+            record = self.read(search_field=id_column, value=value)
+            self.session.delete(record)
+            self.session.commit()
+            return True  
+        except SQLAlchemyError:
+            self.session.rollback()
+            return False 
 
 
 class AccountSearchField(str, Enum):

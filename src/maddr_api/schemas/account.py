@@ -24,3 +24,11 @@ class AccountCreate(AccountBase):
     """
 
     password: str
+
+
+class AccountMessageResponse(BaseModel):
+    """
+    Schema for a message response.
+    """
+
+    message: str
