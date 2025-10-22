@@ -25,6 +25,22 @@ def create_account(
     return AccountService(session).create_account(account_data)
 
 
+@router.get(
+    "/{account_id}",
+    summary="Read an account",
+    description="Retrieve an account by its ID.",
+    status_code=HTTPStatus.OK,
+    response_model=AccountPublic,
+)
+def read_account(
+    account_id: int,
+    session: DatabaseSession = Depends(DatabaseSession.get_session),
+) -> AccountPublic:
+    return AccountService(session).read_account(
+        search_field="id", value=account_id
+    )
+
+
 @router.put(
     "/{account_id}",
     summary="Update an account",

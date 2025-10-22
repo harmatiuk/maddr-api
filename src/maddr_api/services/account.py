@@ -35,6 +35,21 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
 
         return self.create(account_data)
 
+    def read_account(self, search_field: str, value: str) -> Account:
+        """
+        Read an account by a specific field.
+        """
+
+        account = self.read(search_field=search_field, value=value)
+
+        if not account:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail="Account not found.",
+            )
+
+        return account
+
     def update_account(
         self, account_id: int, account_data: AccountCreate
     ) -> Account:
