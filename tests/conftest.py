@@ -78,8 +78,8 @@ def mock_db_time():
     return _mock_db_time
 
 
-@pytest.fixture
-def account(session):
+@pytest_asyncio.fixture
+async def account(session):
     """
     Create a sample account in the database for testing.
     """
@@ -88,7 +88,7 @@ def account(session):
         username="testuser", email="test@gmail.com", password="testpass"
     )
     session.add(new_account)
-    session.commit()
-    session.refresh(new_account)
+    await session.commit()
+    await session.refresh(new_account)
 
     return new_account
