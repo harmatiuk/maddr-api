@@ -32,7 +32,7 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
                     status_code=HTTPStatus.CONFLICT,
                     detail=message,
                 )
-    
+
         return await self.create(account_data)
 
     async def read_account(self, search_field: str, value: str) -> Account:
