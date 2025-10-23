@@ -15,7 +15,9 @@ class DatabaseSession:
         Provide a database session.
         Use as dependency: Depends(DatabaseSession.get_session)
         """
-        async with AsyncSession(DatabaseSession.engine, expire_on_commit=False) as session:
+        async with AsyncSession(
+            DatabaseSession.engine, expire_on_commit=False
+        ) as session:
             yield session
 
     def __init__(self, session: AsyncSession):
