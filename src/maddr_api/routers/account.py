@@ -7,6 +7,10 @@ from maddr_api.schemas.account import (
     AccountMessageResponse,
 )
 from maddr_api.services.account import AccountService
+from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Annotated
+
+Session = Annotated[AsyncSession, Depends(DatabaseSession.get_session)]
 
 router = APIRouter(prefix="/account", tags=["account"])
 
@@ -18,11 +22,11 @@ router = APIRouter(prefix="/account", tags=["account"])
     status_code=HTTPStatus.CREATED,
     response_model=AccountPublic,
 )
-def create_account(
+async def create_account(
     account_data: AccountCreate,
     session: DatabaseSession = Depends(DatabaseSession.get_session),
 ) -> AccountPublic:
-    return AccountService(session).create_account(account_data)
+    return await AccountService(session).create_account(account_data)
 
 
 @router.get(
@@ -32,11 +36,11 @@ def create_account(
     status_code=HTTPStatus.OK,
     response_model=AccountPublic,
 )
-def read_account(
+async def read_account(
     account_id: int,
     session: DatabaseSession = Depends(DatabaseSession.get_session),
 ) -> AccountPublic:
-    return AccountService(session).read_account(
+    return await AccountService(session).read_account(
         search_field="id", value=account_id
     )
 
@@ -48,12 +52,12 @@ def read_account(
     status_code=HTTPStatus.OK,
     response_model=AccountPublic,
 )
-def update_account(
+async def update_account(
     account_id: int,
     account_data: AccountCreate,
     session: DatabaseSession = Depends(DatabaseSession.get_session),
 ) -> AccountPublic:
-    return AccountService(session).update_account(account_id, account_data)
+    return await AccountService(session).update_account(account_id, account_data)
 
 
 @router.delete(
@@ -63,8 +67,8 @@ def update_account(
     status_code=HTTPStatus.OK,
     response_model=AccountMessageResponse,
 )
-def delete_account(
+async def delete_account(
     account_id: int,
     session: DatabaseSession = Depends(DatabaseSession.get_session),
 ) -> AccountMessageResponse:
-    return AccountService(session).delete_account(account_id)
+    return await AccountService(session).delete_account(account_id)
