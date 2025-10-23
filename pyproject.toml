@@ -40,6 +40,8 @@ preview = true
 
 [tool.pytest.ini_options]
 pythonpath = "."
+addopts = '-p no:warnings'
+asyncio_default_fixture_loop_scope = 'function'
 
 [tool.taskipy.tasks]
 lint = 'ruff check'
@@ -50,3 +52,7 @@ pre_test = 'task lint'
 test = 'pytest -s -x --cov=src/maddr_api -vv'
 post_test = 'coverage html'
 tree = 'tree --gitignore'
+
+[tool.coverage.run]
+core = "ctrace"
+concurrency = ["thread", "greenlet"]

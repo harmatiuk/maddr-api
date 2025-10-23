@@ -1,8 +1,11 @@
+import pytest
 from maddr_api.models.account import Account
 from sqlalchemy import select
 from dataclasses import asdict
 
-def test_create_account_in_database(session, mock_db_time):
+
+@pytest.mark.asyncio
+async def test_create_account_in_database(session, mock_db_time):
     with mock_db_time(model=Account) as time:
         new_account = Account(
             username="test_criando_account_in_db",
@@ -11,9 +14,9 @@ def test_create_account_in_database(session, mock_db_time):
         )
 
         session.add(new_account)
-        session.commit()
+        await session.commit()
 
-    account = session.scalar(
+    account = await session.scalar(
         select(Account).where(Account.username == "test_criando_account_in_db")
     )
 

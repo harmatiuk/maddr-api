@@ -141,6 +141,7 @@ def test_read_account_successfully(client, account):
     assert response.status_code == HTTPStatus.OK
     assert response.json() == expected_response
 
+
 def test_read_nonexistent_account(client):
     """
     Test reading a non-existent account.
@@ -173,6 +174,7 @@ def test_update_account_successfully(client, account):
     assert response.status_code == HTTPStatus.OK
     assert response.json() == expected_response
 
+
 def test_update_nonexistent_account(client):
     """
     Test updating a non-existent account.
@@ -199,6 +201,7 @@ def test_delete_account_successfully(client, account):
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {"message": "Account deleted successfully."}
+
 
 def test_delete_nonexistent_account(client):
     """
