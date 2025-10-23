@@ -3,6 +3,7 @@ from maddr_api.models.account import Account
 from sqlalchemy import select
 from dataclasses import asdict
 
+
 @pytest.mark.asyncio
 async def test_create_account_in_database(session, mock_db_time):
     with mock_db_time(model=Account) as time:

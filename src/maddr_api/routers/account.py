@@ -57,7 +57,9 @@ async def update_account(
     account_data: AccountCreate,
     session: DatabaseSession = Depends(DatabaseSession.get_session),
 ) -> AccountPublic:
-    return await AccountService(session).update_account(account_id, account_data)
+    return await AccountService(session).update_account(
+        account_id, account_data
+    )
 
 
 @router.delete(
