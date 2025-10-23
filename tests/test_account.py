@@ -1,5 +1,5 @@
 from http import HTTPStatus
-
+import concurrent.futures
 
 def test_successful_account_creation(client):
     """
@@ -125,6 +125,34 @@ def test_create_account_with_missing_password_field(client):
     assert response.json()["detail"][0]["msg"] == "Field required"
 
 
+def test_create_multiple_accounts_simultaneously(client):
+    """
+    Test creating multiple accounts simultaneously using threads to check performance.
+    """
+
+    def create_account(i):
+        account = dict(
+            username=f"concurrent_user_{i}",
+            email=f"concurrent_user_{i}@example.com",
+            password="testpass",
+        )
+
+        response = client.post("/account/", json=account)
+
+        return response.status_code == HTTPStatus.CREATED
+
+    num_accounts = 10
+    succes_count = 0
+
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=num_accounts
+    ) as executor:
+        results = list(executor.map(create_account, range(num_accounts)))
+        succes_count = sum(results)
+
+    assert succes_count == num_accounts
+
+
 def test_read_account_successfully(client, account):
     """
     Test reading an existing account successfully.
@@ -140,6 +168,7 @@ def test_read_account_successfully(client, account):
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == expected_response
+
 
 def test_read_nonexistent_account(client):
     """
@@ -173,6 +202,7 @@ def test_update_account_successfully(client, account):
     assert response.status_code == HTTPStatus.OK
     assert response.json() == expected_response
 
+
 def test_update_nonexistent_account(client):
     """
     Test updating a non-existent account.
@@ -199,6 +229,7 @@ def test_delete_account_successfully(client, account):
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {"message": "Account deleted successfully."}
+
 
 def test_delete_nonexistent_account(client):
     """
