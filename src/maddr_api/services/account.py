@@ -4,6 +4,7 @@ from maddr_api.schemas.account import AccountCreate, AccountMessageResponse
 from maddr_api.models.account import Account
 from maddr_api.services.main import AccountSearchField
 from maddr_api.services.main import BaseCRUD
+from maddr_api.security.hash_password import get_password_hash
 from sqlalchemy.ext.asyncio import AsyncSession as Session
 
 
@@ -33,6 +34,8 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
                     detail=message,
                 )
 
+        account_data.password = get_password_hash(account_data.password)
+
         return await self.create(account_data)
 
     async def read_account(self, search_field: str, value: str) -> Account:
@@ -56,6 +59,8 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
         """
         Update an existing account by its ID.
         """
+
+        account_data.password = get_password_hash(account_data.password)
 
         account = await self.update(
             id_column="id",

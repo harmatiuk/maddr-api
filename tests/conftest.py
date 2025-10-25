@@ -9,6 +9,7 @@ from maddr_api.config.database import DatabaseSession
 from maddr_api.models.account import Account, table_registry
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from maddr_api.security.hash_password import get_password_hash
 
 
 @pytest_asyncio.fixture
@@ -85,7 +86,9 @@ async def account(session):
     """
 
     new_account = Account(
-        username="testuser", email="test@gmail.com", password="testpass"
+        username="testuser",
+        email="test@gmail.com",
+        password=get_password_hash("testpass"),
     )
     session.add(new_account)
     await session.commit()
