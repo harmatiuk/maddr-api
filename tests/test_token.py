@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+
 def test_create_token_successful(client, account):
     """
     Test generating an access token successfully.
@@ -35,7 +36,6 @@ def test_create_token_invalid_password(client, account):
     assert response.status_code == HTTPStatus.UNAUTHORIZED
     response_data = response.json()
     assert response_data["detail"] == "Incorrect username or password."
-
 
 
 def test_create_token_nonexistent_user(client):
