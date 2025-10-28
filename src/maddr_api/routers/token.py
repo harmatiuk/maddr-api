@@ -24,3 +24,17 @@ async def generate_token(
     session: DatabaseSession = Depends(DatabaseSession.get_session),
 ) -> Token:
     return await TokenService(session).create_access_token(form_data)
+
+
+@router.post(
+    "/refresh-token",
+    summary="Refresh access token",
+    description="Refresh the access token for a user.",
+    status_code=HTTPStatus.OK,
+    response_model=Token,
+)
+async def refresh_token(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    session: DatabaseSession = Depends(DatabaseSession.get_session),
+) -> Token:
+    return await TokenService(session).refresh_access_token(form_data)
