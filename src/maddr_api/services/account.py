@@ -63,13 +63,7 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
         Update an existing account by its ID.
         """
 
-        account_data.password = get_password_hash(account_data.password)
-
-        account = await self.update(
-            id_column="id",
-            value=account_id,
-            update_data=account_data,
-        )
+        account = await self.read(search_field="id", value=account_id)
 
         if not account:
             raise HTTPException(
@@ -77,11 +71,32 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
                 detail="Account not found.",
             )
 
+        for field, message in [
+            (AccountSearchField.USERNAME, "Username already exists."),
+            (AccountSearchField.EMAIL, "Email already exists."),
+        ]:
+            existing_account = await self.read(
+                field.value, getattr(account_data, field.value)
+            )
+            if existing_account:
+                raise HTTPException(
+                    status_code=HTTPStatus.CONFLICT,
+                    detail=message,
+                )
+
         if current_user.id != account_id:
             raise HTTPException(
                 status_code=HTTPStatus.FORBIDDEN,
                 detail="Not authorized to update this account.",
             )
+
+        account_data.password = get_password_hash(account_data.password)
+
+        account = await self.update(
+            id_column="id",
+            value=account_id,
+            update_data=account_data,
+        )
 
         return account
 
@@ -92,8 +107,9 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
         Delete an account by its ID.
         """
 
-        success = await self.delete(id_column="id", value=account_id)
-        if not success:
+        account = await self.read(search_field="id", value=account_id)
+
+        if not account:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
                 detail="Account not found.",
@@ -104,5 +120,7 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
                 status_code=HTTPStatus.FORBIDDEN,
                 detail="Not authorized to delete this account.",
             )
+
+        await self.delete(id_column="id", value=account_id)
 
         return AccountMessageResponse(message="Account deleted successfully.")
