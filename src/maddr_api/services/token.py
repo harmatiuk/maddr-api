@@ -43,3 +43,14 @@ class TokenService(BaseCRUD[Account, Token]):
         access_token = create_access_token(data={"sub": account_data.username})
 
         return Token(access_token=access_token, token_type="bearer")
+    
+
+    async def refresh_access_token(
+        self, form_data: OAuth2PasswordRequestForm
+    ) -> Token:
+        """
+        Refresh the access token for the given account.
+        """
+        new_token = create_access_token(data={"sub": form_data.username})
+
+        return Token(access_token=new_token, token_type="bearer")
