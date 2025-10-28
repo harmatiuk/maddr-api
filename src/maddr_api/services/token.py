@@ -45,7 +45,9 @@ class TokenService(BaseCRUD[Account, Token]):
 
         return Token(access_token=new_token, token_type="bearer")
 
-    async def validate_user_credentials(self, form_data) -> Account:
+    async def validate_user_credentials(
+        self, form_data: OAuth2PasswordRequestForm
+    ) -> Account:
         """
         Validate user credentials.
         """
