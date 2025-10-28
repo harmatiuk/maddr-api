@@ -10,7 +10,7 @@ from maddr_api.config.settings import Settings
 from maddr_api.models.account import Account
 
 settings = Settings()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token", refreshUrl="refresh")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 async def get_current_user(
