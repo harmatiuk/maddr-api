@@ -25,6 +25,7 @@ async def generate_token(
 ) -> Token:
     return await TokenService(session).create_access_token(form_data)
 
+
 @router.post(
     "/refresh-token",
     summary="Refresh access token",

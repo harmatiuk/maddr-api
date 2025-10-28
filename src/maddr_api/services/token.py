@@ -26,6 +26,32 @@ class TokenService(BaseCRUD[Account, Token]):
         Create an access token for the given account.
         """
 
+        account = await self.validate_user_credentials(form_data)
+
+        if account:
+            access_token = create_access_token(data={"sub": account.username})
+
+        return Token(access_token=access_token, token_type="bearer")
+
+    async def refresh_access_token(
+        self, form_data: OAuth2PasswordRequestForm
+    ) -> Token:
+        """
+        Refresh the access token for the given account.
+        """
+
+        account = await self.validate_user_credentials(form_data)
+
+        if account:
+            new_token = create_access_token(data={"sub": account.username})
+
+        return Token(access_token=new_token, token_type="bearer")
+
+    async def validate_user_credentials(self, form_data) -> Account:
+        """
+        Validate user credentials.
+        """
+
         account_data = await self.read("username", form_data.username)
 
         if not account_data:
@@ -40,17 +66,4 @@ class TokenService(BaseCRUD[Account, Token]):
                 detail="Incorrect username or password.",
             )
 
-        access_token = create_access_token(data={"sub": account_data.username})
-
-        return Token(access_token=access_token, token_type="bearer")
-    
-
-    async def refresh_access_token(
-        self, form_data: OAuth2PasswordRequestForm
-    ) -> Token:
-        """
-        Refresh the access token for the given account.
-        """
-        new_token = create_access_token(data={"sub": form_data.username})
-
-        return Token(access_token=new_token, token_type="bearer")
+        return account_data
