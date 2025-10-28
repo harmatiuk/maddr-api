@@ -28,8 +28,7 @@ class TokenService(BaseCRUD[Account, Token]):
 
         account = await self.validate_user_credentials(form_data)
 
-        if account:
-            access_token = create_access_token(data={"sub": account.username})
+        access_token = create_access_token(data={"sub": account.username})
 
         return Token(access_token=access_token, token_type="bearer")
 
@@ -42,8 +41,7 @@ class TokenService(BaseCRUD[Account, Token]):
 
         account = await self.validate_user_credentials(form_data)
 
-        if account:
-            new_token = create_access_token(data={"sub": account.username})
+        new_token = create_access_token(data={"sub": account.username})
 
         return Token(access_token=new_token, token_type="bearer")
 
