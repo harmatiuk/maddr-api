@@ -54,7 +54,10 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
         return account
 
     async def update_account(
-        self, account_id: int, account_data: AccountCreate
+        self,
+        account_id: int,
+        account_data: AccountCreate,
+        current_user: Account,
     ) -> Account:
         """
         Update an existing account by its ID.
@@ -74,9 +77,17 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
                 detail="Account not found.",
             )
 
+        if current_user.id != account_id:
+            raise HTTPException(
+                status_code=HTTPStatus.FORBIDDEN,
+                detail="Not authorized to update this account.",
+            )
+
         return account
 
-    async def delete_account(self, account_id: int) -> AccountMessageResponse:
+    async def delete_account(
+        self, account_id: int, current_user: Account
+    ) -> AccountMessageResponse:
         """
         Delete an account by its ID.
         """
@@ -86,6 +97,12 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
                 detail="Account not found.",
+            )
+
+        if current_user.id != account_id:
+            raise HTTPException(
+                status_code=HTTPStatus.FORBIDDEN,
+                detail="Not authorized to delete this account.",
             )
 
         return AccountMessageResponse(message="Account deleted successfully.")

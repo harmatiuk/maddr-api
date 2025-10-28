@@ -95,3 +95,21 @@ async def account(session):
     await session.refresh(new_account)
 
     return new_account
+
+
+@pytest.fixture
+def token(client, account):
+    """
+    Create a sample authentication token for testing.
+    """
+
+    response = client.post(
+        "/token",
+        data={
+            "username": account.username,
+            "password": "testpass",
+        },
+    )
+
+    token_data = response.json()
+    return token_data["access_token"]

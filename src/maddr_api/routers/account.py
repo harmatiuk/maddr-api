@@ -6,6 +6,8 @@ from maddr_api.schemas.account import (
     AccountPublic,
     AccountMessageResponse,
 )
+from maddr_api.models.account import Account
+from maddr_api.security.get_current_user import get_current_user
 from maddr_api.services.account import AccountService
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Annotated
@@ -56,9 +58,10 @@ async def update_account(
     account_id: int,
     account_data: AccountCreate,
     session: DatabaseSession = Depends(DatabaseSession.get_session),
+    current_user: Account = Depends(get_current_user),
 ) -> AccountPublic:
     return await AccountService(session).update_account(
-        account_id, account_data
+        account_id, account_data, current_user
     )
 
 
@@ -72,5 +75,8 @@ async def update_account(
 async def delete_account(
     account_id: int,
     session: DatabaseSession = Depends(DatabaseSession.get_session),
+    current_user: Account = Depends(get_current_user),
 ) -> AccountMessageResponse:
-    return await AccountService(session).delete_account(account_id)
+    return await AccountService(session).delete_account(
+        account_id, current_user
+    )

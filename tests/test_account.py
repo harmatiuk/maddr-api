@@ -153,7 +153,7 @@ def test_read_nonexistent_account(client):
     assert response.json() == {"detail": "Account not found."}
 
 
-def test_update_account_successfully(client, account):
+def test_update_account_successfully(client, account, token):
     """
     Test updating an existing account successfully.
     """
@@ -164,7 +164,11 @@ def test_update_account_successfully(client, account):
         password="updated_password",
     )
 
-    response = client.put(f"/account/{account.id}", json=updated_data)
+    response = client.put(
+        f"/account/{account.id}",
+        headers={"Authorization": f"Bearer {token}"},
+        json=updated_data,
+    )
 
     expected_response = dict(
         id=account.id,
@@ -175,7 +179,7 @@ def test_update_account_successfully(client, account):
     assert response.json() == expected_response
 
 
-def test_update_nonexistent_account(client):
+def test_update_nonexistent_account(client, token):
     """
     Test updating a non-existent account.
     """
@@ -186,29 +190,39 @@ def test_update_nonexistent_account(client):
         password="nonexistent_password",
     )
 
-    response = client.put("/account/9999", json=updated_data)
+    response = client.put(
+        "/account/9999",
+        headers={"Authorization": f"Bearer {token}"},
+        json=updated_data,
+    )
 
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert response.json() == {"detail": "Account not found."}
 
 
-def test_delete_account_successfully(client, account):
+def test_delete_account_successfully(client, account, token):
     """
     Test deleting an existing account successfully.
     """
 
-    response = client.delete(f"/account/{account.id}")
+    response = client.delete(
+        f"/account/{account.id}",
+        headers={"Authorization": f"Bearer {token}"},
+    )
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {"message": "Account deleted successfully."}
 
 
-def test_delete_nonexistent_account(client):
+def test_delete_nonexistent_account(client, token):
     """
     Test deleting a non-existent account.
     """
 
-    response = client.delete("/account/9999")
+    response = client.delete(
+        "/account/9999",
+        headers={"Authorization": f"Bearer {token}"},
+    )
 
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert response.json() == {"detail": "Account not found."}
