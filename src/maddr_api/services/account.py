@@ -21,18 +21,7 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
         Create a new account after checking for existing username and email.
         """
 
-        for field, message in [
-            (AccountSearchField.USERNAME, "Username already exists."),
-            (AccountSearchField.EMAIL, "Email already exists."),
-        ]:
-            existing_account = await self.read(
-                field.value, getattr(account_data, field.value)
-            )
-            if existing_account:
-                raise HTTPException(
-                    status_code=HTTPStatus.CONFLICT,
-                    detail=message,
-                )
+        await self.validate_account_uniqueness(account_data)
 
         account_data.password = get_password_hash(account_data.password)
 
@@ -43,15 +32,9 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
         Read an account by a specific field.
         """
 
-        account = await self.read(search_field=search_field, value=value)
+        await self.validate_account_exists(value)
 
-        if not account:
-            raise HTTPException(
-                status_code=HTTPStatus.NOT_FOUND,
-                detail="Account not found.",
-            )
-
-        return account
+        return await self.read(search_field=search_field, value=value)
 
     async def update_account(
         self,
@@ -63,32 +46,11 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
         Update an existing account by its ID.
         """
 
-        account = await self.read(search_field="id", value=account_id)
+        await self.validate_account_exists(account_id=account_id)
 
-        if not account:
-            raise HTTPException(
-                status_code=HTTPStatus.NOT_FOUND,
-                detail="Account not found.",
-            )
+        await self.validate_account_uniqueness(account_data)
 
-        for field, message in [
-            (AccountSearchField.USERNAME, "Username already exists."),
-            (AccountSearchField.EMAIL, "Email already exists."),
-        ]:
-            existing_account = await self.read(
-                field.value, getattr(account_data, field.value)
-            )
-            if existing_account:
-                raise HTTPException(
-                    status_code=HTTPStatus.CONFLICT,
-                    detail=message,
-                )
-
-        if current_user.id != account_id:
-            raise HTTPException(
-                status_code=HTTPStatus.FORBIDDEN,
-                detail="Not authorized to update this account.",
-            )
+        await self.validate_account_access(account_id, current_user)
 
         account_data.password = get_password_hash(account_data.password)
 
@@ -107,6 +69,19 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
         Delete an account by its ID.
         """
 
+        await self.validate_account_exists(account_id)
+
+        await self.validate_account_access(account_id, current_user)
+
+        await self.delete(id_column="id", value=account_id)
+
+        return AccountMessageResponse(message="Account deleted successfully.")
+
+    async def validate_account_exists(self, account_id) -> None:
+        """
+        Validate if the account exists.
+        """
+
         account = await self.read(search_field="id", value=account_id)
 
         if not account:
@@ -115,12 +90,30 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
                 detail="Account not found.",
             )
 
+    async def validate_account_access(self, account_id, current_user) -> None:
+        """
+        Validate if the current user has access to modify the account.
+        """
+
         if current_user.id != account_id:
             raise HTTPException(
                 status_code=HTTPStatus.FORBIDDEN,
                 detail="Not authorized to delete this account.",
             )
 
-        await self.delete(id_column="id", value=account_id)
-
-        return AccountMessageResponse(message="Account deleted successfully.")
+    async def validate_account_uniqueness(self, account_data) -> None:
+        """
+        Validate if the username or email already exists.
+        """
+        for field, message in [
+            (AccountSearchField.USERNAME, "Username already exists."),
+            (AccountSearchField.EMAIL, "Email already exists."),
+        ]:
+            existing_account = await self.read(
+                field.value, getattr(account_data, field.value)
+            )
+            if existing_account:
+                raise HTTPException(
+                    status_code=HTTPStatus.CONFLICT,
+                    detail=message,
+                )
