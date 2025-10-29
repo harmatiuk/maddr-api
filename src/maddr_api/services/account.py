@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import Any
 from fastapi import HTTPException
 from maddr_api.schemas.account import AccountCreate, AccountMessageResponse
 from maddr_api.models.account import Account
@@ -27,12 +28,12 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
 
         return await self.create(account_data)
 
-    async def read_account(self, search_field: str, value: str) -> Account:
+    async def read_account(self, search_field: str, value: Any) -> Account:
         """
         Read an account by a specific field.
         """
 
-        await self.validate_account_exists(value)
+        await self.validate_account_exists(account_id=value)
 
         return await self.read(search_field=search_field, value=value)
 
@@ -77,7 +78,7 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
 
         return AccountMessageResponse(message="Account deleted successfully.")
 
-    async def validate_account_exists(self, account_id) -> None:
+    async def validate_account_exists(self, account_id: int) -> None:
         """
         Validate if the account exists.
         """
@@ -90,7 +91,7 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
                 detail="Account not found.",
             )
 
-    async def validate_account_access(self, account_id, current_user) -> None:
+    async def validate_account_access(self, account_id: int, current_user: Account) -> None:
         """
         Validate if the current user has access to modify the account.
         """
@@ -98,13 +99,14 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
         if current_user.id != account_id:
             raise HTTPException(
                 status_code=HTTPStatus.FORBIDDEN,
-                detail="Not authorized to delete this account.",
+                detail="Not authorized to modify this account.",
             )
 
-    async def validate_account_uniqueness(self, account_data) -> None:
+    async def validate_account_uniqueness(self, account_data: AccountCreate) -> None:
         """
         Validate if the username or email already exists.
         """
+
         for field, message in [
             (AccountSearchField.USERNAME, "Username already exists."),
             (AccountSearchField.EMAIL, "Email already exists."),
