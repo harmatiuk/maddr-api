@@ -5,7 +5,7 @@ from logging.config import fileConfig
 from sqlalchemy import pool
 
 from alembic import context
-from maddr_api.models.account import table_registry
+from maddr_api.models import table_registry
 from maddr_api.config.settings import Settings
 
 

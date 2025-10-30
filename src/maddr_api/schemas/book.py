@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class BookBase(BaseModel):
     """
     Base schema for a book.
@@ -9,11 +10,14 @@ class BookBase(BaseModel):
     author_id: int
     publish_year: int
 
+
 class BookCreate(BookBase):
     """
     Schema for creating a new book in the database.
     """
+
     pass
+
 
 class BookPublic(BookBase):
     """
@@ -21,6 +25,7 @@ class BookPublic(BookBase):
     """
 
     id: int
+
 
 class BookMessageResponse(BaseModel):
     """
