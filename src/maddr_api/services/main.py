@@ -1,3 +1,4 @@
+import re
 from enum import Enum
 from typing import Generic, TypeVar, Type, Optional, Any
 from sqlalchemy import select
@@ -78,6 +79,16 @@ class BaseCRUD(Generic[ModelType, CreateSchemaType]):
         except SQLAlchemyError:
             await self.session.rollback()
             return False
+        
+    def sanitization_string(self, input_string:str) -> str:
+        """
+        Sanitize input strings by removing special characters and normalizing whitespace.
+        """
+        sanitized = re.sub(r'[^a-zA-Z0-9 ]', '', input_string)
+        sanitized = sanitized.strip().lower()
+        sanitized = re.sub(r'\s+', ' ', sanitized)
+
+        return sanitized
 
 
 class AccountSearchField(str, Enum):
