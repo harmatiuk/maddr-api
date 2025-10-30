@@ -16,4 +16,7 @@ class BookService(BaseCRUD[Book, BookCreate]):
         """
         Create a new book in the database.
         """
+        
+        book_data.title = self.sanitization_string(book_data.title)
+
         return await self.create(book_data)
