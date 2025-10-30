@@ -91,7 +91,9 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
                 detail="Account not found.",
             )
 
-    async def validate_account_access(self, account_id: int, current_user: Account) -> None:
+    async def validate_account_access(
+        self, account_id: int, current_user: Account
+    ) -> None:
         """
         Validate if the current user has access to modify the account.
         """
@@ -102,7 +104,9 @@ class AccountService(BaseCRUD[Account, AccountCreate]):
                 detail="Not authorized to modify this account.",
             )
 
-    async def validate_account_uniqueness(self, account_data: AccountCreate) -> None:
+    async def validate_account_uniqueness(
+        self, account_data: AccountCreate
+    ) -> None:
         """
         Validate if the username or email already exists.
         """
