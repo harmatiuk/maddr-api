@@ -17,7 +17,7 @@ class Book:
         init=False, primary_key=True, autoincrement=True
     )
     author_id: Mapped[int] = mapped_column(nullable=False)
-    title: Mapped[str] = mapped_column(nullable=False)
+    title: Mapped[str] = mapped_column(nullable=False, unique=True)
     publish_year: Mapped[int] = mapped_column(nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         init=False, nullable=False, server_default=func.now()

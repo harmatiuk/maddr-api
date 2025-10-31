@@ -75,3 +75,25 @@ def test_create_book_with_special_characters_in_title(client, token):
 
     assert response.status_code == HTTPStatus.CREATED
     assert response.json() == expected_response
+
+def test_create_book_with_existing_title(client, token, book):
+    """
+    Test creating a book with a title that already exists.
+    """
+    headers = {"Authorization": f"Bearer {token}"}
+    new_book = dict(
+        author_id=1,
+        title=book.title,
+        publish_year=2021,
+    )
+
+    response = client.post(
+        "/book/", json=new_book, headers=headers
+    )
+
+    expected_response = new_book.copy()
+    expected_response.update(dict(id=1))
+
+    assert response.status_code == HTTPStatus.CONFLICT
+    assert response.json() == {"detail": "A book with this title already exists."}
+
