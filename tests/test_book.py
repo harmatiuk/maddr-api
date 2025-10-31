@@ -91,8 +91,6 @@ def test_create_book_with_existing_title(client, token, book):
         "/book/", json=new_book, headers=headers
     )
 
-    expected_response = new_book.copy()
-    expected_response.update(dict(id=1))
 
     assert response.status_code == HTTPStatus.CONFLICT
     assert response.json() == {"detail": "A book with this title already exists."}
