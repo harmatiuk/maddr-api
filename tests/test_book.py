@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+
 def test_successful_book_creation(client, token):
     """
     Test creating a new book successfully.
@@ -11,9 +12,7 @@ def test_successful_book_creation(client, token):
         publish_year=2024,
     )
 
-    response = client.post(
-        "/book/", json=book_data, headers=headers
-        )
+    response = client.post("/book/", json=book_data, headers=headers)
 
     expected_response = book_data.copy()
     expected_response.update(dict(title="test book title"))
@@ -21,6 +20,7 @@ def test_successful_book_creation(client, token):
 
     assert response.status_code == HTTPStatus.CREATED
     assert response.json() == expected_response
+
 
 def test_create_book_unauthorized(client):
     """
@@ -38,6 +38,7 @@ def test_create_book_unauthorized(client):
     assert response.status_code == HTTPStatus.UNAUTHORIZED
     assert response.json() == {"detail": "Not authenticated"}
 
+
 def test_create_book_missing_fields(client, token):
     """
     Test creating a book with missing required fields.
@@ -47,12 +48,11 @@ def test_create_book_missing_fields(client, token):
         title="Incomplete Book",
         # Missing author_id and publish_year
     )
-    response = client.post(
-        "/book/", json=book_data, headers=headers
-        )
-    
+    response = client.post("/book/", json=book_data, headers=headers)
+
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
     assert "detail" in response.json()
+
 
 def test_create_book_with_special_characters_in_title(client, token):
     """
@@ -65,9 +65,7 @@ def test_create_book_with_special_characters_in_title(client, token):
         publish_year=2024,
     )
 
-    response = client.post(
-        "/book/", json=book_data, headers=headers
-    )
+    response = client.post("/book/", json=book_data, headers=headers)
 
     expected_response = book_data.copy()
     expected_response.update(dict(id=1))
@@ -75,6 +73,7 @@ def test_create_book_with_special_characters_in_title(client, token):
 
     assert response.status_code == HTTPStatus.CREATED
     assert response.json() == expected_response
+
 
 def test_create_book_with_existing_title(client, token, book):
     """
@@ -87,11 +86,9 @@ def test_create_book_with_existing_title(client, token, book):
         publish_year=2021,
     )
 
-    response = client.post(
-        "/book/", json=new_book, headers=headers
-    )
-
+    response = client.post("/book/", json=new_book, headers=headers)
 
     assert response.status_code == HTTPStatus.CONFLICT
-    assert response.json() == {"detail": "A book with this title already exists."}
-
+    assert response.json() == {
+        "detail": "A book with this title already exists."
+    }

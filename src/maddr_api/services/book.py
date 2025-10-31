@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession as Session
 from http import HTTPStatus
 from maddr_api.utils.sanitization import sanitization_string
 
+
 class BookService(BaseCRUD[Book, BookCreate]):
     """
     Service layer for book operations.
@@ -18,10 +19,12 @@ class BookService(BaseCRUD[Book, BookCreate]):
         """
         Create a new book in the database.
         """
-        
+
         book_data.title = sanitization_string(book_data.title)
 
-        existing_book = await self.read(search_field="title", value=book_data.title)
+        existing_book = await self.read(
+            search_field="title", value=book_data.title
+        )
 
         if existing_book:
             raise HTTPException(
