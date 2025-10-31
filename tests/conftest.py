@@ -10,6 +10,8 @@ from maddr_api.models.account import Account, table_registry
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from maddr_api.security.hash_password import get_password_hash
+from maddr_api.models.book import Book
+from maddr_api.utils.sanitization import sanitization_string
 
 
 @pytest_asyncio.fixture
@@ -95,6 +97,24 @@ async def account(session):
     await session.refresh(new_account)
 
     return new_account
+
+
+@pytest_asyncio.fixture
+async def book(session):
+    """
+    Create a sample book in the database for testing.
+    """
+
+    new_book = Book(
+        author_id=1,
+        title=sanitization_string("Sample Book"),
+        publish_year=2020,
+    )
+    session.add(new_book)
+    await session.commit()
+    await session.refresh(new_book)
+
+    return new_book
 
 
 @pytest.fixture
