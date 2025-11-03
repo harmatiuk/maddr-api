@@ -28,7 +28,7 @@ class Novelist:
         onupdate=func.now(),
     )
 
-    books: Mapped[list["Book"]]  = relationship(
+    books: Mapped[list["Book"]] = relationship(
         init=False,
         cascade="all, delete-orphan",
         lazy="selectin",

@@ -59,5 +59,5 @@ async def read_all_books(
         title=filter_books.title,
         publish_year=filter_books.publish_year,
         skip=filter_books.skip,
-        limit=filter_books.limit
+        limit=filter_books.limit,
     )

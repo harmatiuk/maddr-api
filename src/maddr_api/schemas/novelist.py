@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+
 
 class NovelistBase(BaseModel):
     """
@@ -14,6 +15,7 @@ class NovelistCreate(BaseModel):
     """
 
     name: str
+
 
 class NovelistPublic(NovelistCreate):
     """

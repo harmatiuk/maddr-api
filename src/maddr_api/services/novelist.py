@@ -1,8 +1,7 @@
 from fastapi import HTTPException
-from maddr_api.schemas.novelist import NovelistCreate, NovelistPublic
+from maddr_api.schemas.novelist import NovelistCreate
 from maddr_api.models.novelist import Novelist
 from maddr_api.services.main import BaseCRUD
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession as Session
 from http import HTTPStatus
 from maddr_api.utils.sanitization import sanitization_string
