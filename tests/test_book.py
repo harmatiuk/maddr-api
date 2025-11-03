@@ -139,3 +139,67 @@ def test_read_all_books_success(client, token, book):
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == expected_response
+
+def test_read_all_books_with_year_filter(client, token, book):
+    """
+    Test reading all books with publish year filter.
+    """
+    headers = {"Authorization": f"Bearer {token}"}
+    response = client.get(f"/book/?publish_year={book.publish_year}&skip=0&limit=20", headers=headers)
+    expected_response = [
+        dict(
+            id=book.id,
+            title=book.title,
+            author_id=book.author_id,
+            publish_year=book.publish_year,
+        )
+    ]
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == expected_response
+
+def test_read_all_books_with_title_filter(client, token, book):
+    """
+    Test reading all books with title filter.
+    """
+    headers = {"Authorization": f"Bearer {token}"}
+    response = client.get(f"/book/?title={book.title}&skip=0&limit=20", headers=headers)
+    expected_response = [
+        dict(
+            id=book.id,
+            title=book.title,
+            author_id=book.author_id,
+            publish_year=book.publish_year,
+        )]
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == expected_response
+
+def test_read_all_books_title_not_found(client, token):
+    """
+    Test reading all books when no books exist.
+    """
+    headers = {"Authorization": f"Bearer {token}"}
+    response = client.get("/book/?title=NonExistentBook&skip=0&limit=20", headers=headers)
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {"detail": "No books found."}
+
+def test_read_all_books_year_not_found(client, token):
+    """
+    Test reading all books when no books exist for the given year.
+    """
+    headers = {"Authorization": f"Bearer {token}"}
+    response = client.get("/book/?publish_year=1999&skip=0&limit=20", headers=headers)
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {"detail": "No books found."}
+
+def test_read_all_books_unauthorized(client):
+    """
+    Test reading all books without authorization.
+    """
+
+    response = client.get("/book/?skip=0&limit=20")
+
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
+    assert response.json() == {"detail": "Not authenticated"}

@@ -39,6 +39,7 @@ class FilterPage(BaseModel):
     """
     Schema for pagination and filtering of books.
     """
-
+    publish_year: int | None = None
+    title: str | None = None
     limit: int = Field(20, ge=1)
     skip: int = Field(0, ge=0)

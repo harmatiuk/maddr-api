@@ -51,17 +51,33 @@ class BookService(BaseCRUD[Book, BookCreate]):
         return book
 
     async def read_all_books(
-        self, skip: int, limit: int
+        self,
+        title: str | None,
+        publish_year: int | None,
+        skip: int,
+        limit: int,
     ) -> dict[str, list[BookPublic]]:
         """
-        Read all books from the database.
+        Read all books with optional filtering by title and publish year.
         """
 
-        query = await self.session.scalars(
-            select(self.model).offset(skip).limit(limit)
-        )
+        filter_conditions = []
 
-        books = query.all()
+        if title:
+            filter_conditions.append(self.model.title.ilike(f"%{title}%"))
+        
+        if publish_year:
+            filter_conditions.append(self.model.publish_year == publish_year)
+        
+        query = select(self.model)
+    
+        if filter_conditions:
+            query = query.where(*filter_conditions)
+        
+        query = query.offset(skip).limit(limit)
+        result = await self.session.scalars(query)
+        
+        books = result.all()
 
         if not books:
             raise HTTPException(
