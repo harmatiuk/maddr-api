@@ -29,3 +29,17 @@ async def create_book(
     current_user: Account = Depends(get_current_user),
 ) -> BookPublic:
     return await BookService(session).create_book(book_data)
+
+@router.get(
+    "/{book_id}",
+    summary="Get book by ID",
+    description="Retrieve a book by its ID.",
+    status_code=HTTPStatus.OK,
+    response_model=BookPublic,
+)
+async def read_book(
+    book_id: int,
+    session: Session,
+    current_user: Account = Depends(get_current_user),
+) -> BookPublic:
+    return await BookService(session).read_book(book_id)

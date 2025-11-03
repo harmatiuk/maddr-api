@@ -33,3 +33,18 @@ class BookService(BaseCRUD[Book, BookCreate]):
             )
 
         return await self.create(book_data)
+    
+    async def read_book(self, book_id:int) -> Book:
+        """
+        Read a book by its ID.
+        """
+
+        book = await self.read(search_field="id", value=book_id)
+
+        if not book:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail="Book not found.",
+            )
+
+        return book

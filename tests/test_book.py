@@ -92,3 +92,30 @@ def test_create_book_with_existing_title(client, token, book):
     assert response.json() == {
         "detail": "A book with this title already exists."
     }
+
+def test_read_book_success(client, token, book):
+    """
+    Test reading an existing book successfully.
+    """
+    headers = {"Authorization": f"Bearer {token}"}
+    response = client.get(f"/book/{book.id}", headers=headers)
+    expected_response = dict(
+        id=book.id,
+        title=book.title,
+        author_id=book.author_id,
+        publish_year=book.publish_year,
+    )
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == expected_response
+
+
+def test_read_book_not_found(client, token):
+    """
+    Test reading a non-existing book.
+    """
+    headers = {"Authorization": f"Bearer {token}"}
+    response = client.get("/book/9999", headers=headers)
+    
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {"detail": "Book not found."}
