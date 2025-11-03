@@ -45,7 +45,7 @@ async def read_book(
 
 @router.get(
     "/",
-    summary="Get all books",
+    summary="Get all books with optional filtering by title and publish year",
     description="Retrieve a list of all books.",
     status_code=HTTPStatus.OK,
     response_model=list[BookPublic],
@@ -56,5 +56,8 @@ async def read_all_books(
     current_user: Account = Depends(get_current_user),
 ) -> list[BookPublic]:
     return await BookService(session).read_all_books(
-        skip=filter_books.skip, limit=filter_books.limit
+        title=filter_books.title,
+        publish_year=filter_books.publish_year,
+        skip=filter_books.skip,
+        limit=filter_books.limit
     )
