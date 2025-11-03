@@ -93,6 +93,7 @@ def test_create_book_with_existing_title(client, token, book):
         "detail": "A book with this title already exists."
     }
 
+
 def test_read_book_success(client, token, book):
     """
     Test reading an existing book successfully.
@@ -116,6 +117,6 @@ def test_read_book_not_found(client, token):
     """
     headers = {"Authorization": f"Bearer {token}"}
     response = client.get("/book/9999", headers=headers)
-    
+
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert response.json() == {"detail": "Book not found."}

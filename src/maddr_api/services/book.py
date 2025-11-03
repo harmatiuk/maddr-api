@@ -1,7 +1,8 @@
 from fastapi import HTTPException
-from maddr_api.schemas.book import BookCreate
+from maddr_api.schemas.book import BookCreate, BookPublic
 from maddr_api.models.book import Book
 from maddr_api.services.main import BaseCRUD
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession as Session
 from http import HTTPStatus
 from maddr_api.utils.sanitization import sanitization_string
@@ -33,8 +34,8 @@ class BookService(BaseCRUD[Book, BookCreate]):
             )
 
         return await self.create(book_data)
-    
-    async def read_book(self, book_id:int) -> Book:
+
+    async def read_book(self, book_id: int) -> Book:
         """
         Read a book by its ID.
         """
@@ -48,3 +49,24 @@ class BookService(BaseCRUD[Book, BookCreate]):
             )
 
         return book
+
+    async def read_all_books(
+        self, skip: int, limit: int
+    ) -> dict[str, list[BookPublic]]:
+        """
+        Read all books from the database.
+        """
+
+        query = await self.session.scalars(
+            select(self.model).offset(skip).limit(limit)
+        )
+
+        books = query.all()
+
+        if not books:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail="No books found.",
+            )
+
+        return books

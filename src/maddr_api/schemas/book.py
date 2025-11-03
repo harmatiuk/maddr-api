@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class BookBase(BaseModel):
@@ -33,3 +33,12 @@ class BookMessageResponse(BaseModel):
     """
 
     message: str
+
+
+class FilterPage(BaseModel):
+    """
+    Schema for pagination and filtering of books.
+    """
+
+    limit: int = Field(20, ge=1)
+    skip: int = Field(0, ge=0)
