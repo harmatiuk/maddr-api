@@ -120,3 +120,22 @@ def test_read_book_not_found(client, token):
 
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert response.json() == {"detail": "Book not found."}
+
+
+def test_read_all_books_success(client, token, book):
+    """
+    Test reading all books successfully.
+    """
+    headers = {"Authorization": f"Bearer {token}"}
+    response = client.get("/book/?skip=0&limit=20", headers=headers)
+    expected_response = [
+        dict(
+            id=book.id,
+            title=book.title,
+            author_id=book.author_id,
+            publish_year=book.publish_year,
+        )
+    ]
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == expected_response
