@@ -1,21 +1,21 @@
 from fastapi import HTTPException
 from maddr_api.schemas.author import authorCreate
-from maddr_api.models.author import author
+from maddr_api.models.author import Author
 from maddr_api.services.main import BaseCRUD
 from sqlalchemy.ext.asyncio import AsyncSession as Session
 from http import HTTPStatus
 from maddr_api.utils.sanitization import sanitization_string
 
 
-class authorService(BaseCRUD[author, authorCreate]):
+class authorService(BaseCRUD[Author, authorCreate]):
     """
     Service layer for author operations.
     """
 
     def __init__(self, session: Session):
-        super().__init__(model=author, session=session)
+        super().__init__(model=Author, session=session)
 
-    async def create_author(self, author_data: authorCreate) -> author:
+    async def create_author(self, author_data: authorCreate) -> Author:
         """
         Create a new author in the database.
         """
@@ -34,7 +34,7 @@ class authorService(BaseCRUD[author, authorCreate]):
 
         return await self.create(author_data)
 
-    async def read_author(self, author_id: int) -> author:
+    async def read_author(self, author_id: int) -> Author:
         """
         Read a author by its ID.
         """

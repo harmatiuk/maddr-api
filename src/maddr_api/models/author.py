@@ -6,7 +6,7 @@ from .account import table_registry
 
 
 @table_registry.mapped_as_dataclass
-class author:
+class Author:
     """
     Database model for a author.
     """
