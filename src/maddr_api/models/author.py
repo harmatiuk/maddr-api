@@ -1,18 +1,17 @@
 from datetime import datetime
 
-from maddr_api.models.book import Book
 from sqlalchemy import func
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 from .account import table_registry
 
 
 @table_registry.mapped_as_dataclass
-class Novelist:
+class author:
     """
-    Database model for a novelist.
+    Database model for a author.
     """
 
-    __tablename__ = "novelist"
+    __tablename__ = "author"
 
     id: Mapped[int] = mapped_column(
         init=False, primary_key=True, autoincrement=True
@@ -26,10 +25,4 @@ class Novelist:
         nullable=False,
         server_default=func.now(),
         onupdate=func.now(),
-    )
-
-    books: Mapped[list["Book"]] = relationship(
-        init=False,
-        cascade="all, delete-orphan",
-        lazy="selectin",
     )
