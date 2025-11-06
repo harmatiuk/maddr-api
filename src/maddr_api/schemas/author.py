@@ -9,7 +9,7 @@ class AuthorBase(BaseModel):
     id: int
 
 
-class AuthorCreate(BaseModel):
+class AuthorCreate(AuthorBase):
     """
     Schema for creating a new author in the database.
     """

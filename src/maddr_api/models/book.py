@@ -37,4 +37,4 @@ class Book:
         onupdate=func.now(),
     )
 
-    author: Mapped["Author"] = relationship("Author", back_populates="books")
+    author: Mapped["Author"] = relationship("Author", back_populates="books", init=False)
