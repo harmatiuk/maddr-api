@@ -1,8 +1,14 @@
+from __future__ import annotations
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .account import table_registry
+
+
+if TYPE_CHECKING:
+    from .book import Book
 
 
 @table_registry.mapped_as_dataclass
@@ -26,3 +32,5 @@ class Author:
         server_default=func.now(),
         onupdate=func.now(),
     )
+
+    books: Mapped[list["Book"]] = relationship("Book", back_populates="author")
