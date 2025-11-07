@@ -1,32 +1,28 @@
 from __future__ import annotations
 from datetime import datetime
-
 from typing import TYPE_CHECKING
-from sqlalchemy import ForeignKey, func
+
+from sqlalchemy import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .account import table_registry
 
 
 if TYPE_CHECKING:
-    from .author import Author
+    from .book import Book
 
 
 @table_registry.mapped_as_dataclass
-class Book:
+class Author:
     """
-    Database model for a book.
+    Database model for an author.
     """
 
-    __tablename__ = "book"
+    __tablename__ = "author"
 
     id: Mapped[int] = mapped_column(
         init=False, primary_key=True, autoincrement=True
     )
-    author_id: Mapped[int] = mapped_column(
-        ForeignKey("author.id"), nullable=False
-    )
-    title: Mapped[str] = mapped_column(nullable=False)
-    publish_year: Mapped[int] = mapped_column(nullable=False)
+    name: Mapped[str] = mapped_column(nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         init=False, nullable=False, server_default=func.now()
     )
@@ -37,6 +33,6 @@ class Book:
         onupdate=func.now(),
     )
 
-    author: Mapped["Author"] = relationship(
-        "Author", back_populates="books", init=False
+    books: Mapped[list["Book"]] = relationship(
+        "Book", back_populates="author", init=False
     )

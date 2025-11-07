@@ -1,3 +1,4 @@
+from maddr_api.models.author import Author
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.pool import StaticPool
@@ -115,6 +116,22 @@ async def book(session):
     await session.refresh(new_book)
 
     return new_book
+
+
+@pytest_asyncio.fixture
+async def author(session):
+    """
+    Create a sample author in the database for testing.
+    """
+
+    new_author = Author(
+        name=sanitization_string("Sample Author"),
+    )
+    session.add(new_author)
+    await session.commit()
+    await session.refresh(new_author)
+
+    return new_author
 
 
 @pytest.fixture

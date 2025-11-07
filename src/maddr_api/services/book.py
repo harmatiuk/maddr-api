@@ -65,18 +65,18 @@ class BookService(BaseCRUD[Book, BookCreate]):
 
         if title:
             filter_conditions.append(self.model.title.ilike(f"%{title}%"))
-        
+
         if publish_year:
             filter_conditions.append(self.model.publish_year == publish_year)
-        
+
         query = select(self.model)
-    
+
         if filter_conditions:
             query = query.where(*filter_conditions)
-        
+
         query = query.offset(skip).limit(limit)
         result = await self.session.scalars(query)
-        
+
         books = result.all()
 
         if not books:
