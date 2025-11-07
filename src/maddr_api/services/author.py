@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from maddr_api.schemas.author import AuthorCreate
+from maddr_api.schemas.author import AuthorCreate, AuthorMessageResponse
 from maddr_api.models.author import Author
 from maddr_api.services.main import BaseCRUD
 from sqlalchemy.ext.asyncio import AsyncSession as Session
@@ -48,3 +48,20 @@ class AuthorService(BaseCRUD[Author, AuthorCreate]):
             )
 
         return author
+
+    async def delete_author(self, author_id: int) -> None:
+        """
+        Delete an author by its ID.
+        """
+
+        author = await self.read(search_field="id", value=author_id)
+
+        if not author:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail="Author not found.",
+            )
+
+        await self.delete(id_column="id", value=author_id)
+
+        return AuthorMessageResponse(message="Author deleted successfully.")
