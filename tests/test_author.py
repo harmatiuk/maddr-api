@@ -47,7 +47,7 @@ def test_create_author_with_existing_name(client, token, author):
 
     assert response.status_code == HTTPStatus.CONFLICT
     assert response.json() == {
-        "detail": "A author with this name already exists."
+        "detail": "An author with this name already exists."
     }
 
 

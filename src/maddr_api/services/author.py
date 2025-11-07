@@ -29,7 +29,7 @@ class AuthorService(BaseCRUD[Author, AuthorCreate]):
         if existing_author:
             raise HTTPException(
                 status_code=HTTPStatus.CONFLICT,
-                detail="A author with this name already exists.",
+                detail="An author with this name already exists.",
             )
 
         return await self.create(author_data)

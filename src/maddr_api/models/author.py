@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 @table_registry.mapped_as_dataclass
 class Author:
     """
-    Database model for a author.
+    Database model for an author.
     """
 
     __tablename__ = "author"
