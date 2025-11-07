@@ -11,7 +11,7 @@ class AuthorCreate(BaseModel):
 
 class AuthorPublic(AuthorCreate):
     """
-    Public representation of a author.
+    Public representation of an author.
     """
 
     id: int
