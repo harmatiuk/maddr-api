@@ -89,3 +89,36 @@ def test_read_author_not_found(client, token):
 
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert response.json() == {"detail": "Author not found."}
+
+
+def test_delete_author_success(client, token, author):
+    """
+    Test deleting an existing author successfully.
+    """
+    headers = {"Authorization": f"Bearer {token}"}
+    response = client.delete(f"/author/{author.id}", headers=headers)
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {"message": "Author deleted successfully."}
+
+
+def test_delete_author_not_found(client, token):
+    """
+    Test deleting a non-existing author.
+    """
+    headers = {"Authorization": f"Bearer {token}"}
+
+    response = client.delete("/author/999", headers=headers)
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {"detail": "Author not found."}
+
+
+def test_delete_author_unauthorized(client, author):
+    """
+    Test deleting an author without authorization.
+    """
+    response = client.delete(f"/author/{author.id}")
+
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
+    assert response.json() == {"detail": "Not authenticated"}

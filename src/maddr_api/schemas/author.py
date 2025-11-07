@@ -17,7 +17,7 @@ class AuthorPublic(AuthorCreate):
     id: int
 
 
-class authorMessageResponse(BaseModel):
+class AuthorMessageResponse(BaseModel):
     """
     Schema for a message response related to authors.
     """
