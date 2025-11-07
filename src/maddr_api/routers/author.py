@@ -58,5 +58,5 @@ async def delete_author(
     author_id: int,
     session: Session,
     current_user: Account = Depends(get_current_user),
-) -> None:
+) -> AuthorMessageResponse:
     return await AuthorService(session).delete_author(author_id)
