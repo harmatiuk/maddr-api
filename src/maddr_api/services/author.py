@@ -49,7 +49,7 @@ class AuthorService(BaseCRUD[Author, AuthorCreate]):
 
         return author
 
-    async def delete_author(self, author_id: int) -> None:
+    async def delete_author(self, author_id: int) -> AuthorMessageResponse:
         """
         Delete an author by its ID.
         """
