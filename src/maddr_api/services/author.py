@@ -44,7 +44,7 @@ class AuthorService(BaseCRUD[Author, AuthorCreate]):
         if not author:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail="author not found.",
+                detail="Author not found.",
             )
 
         return author

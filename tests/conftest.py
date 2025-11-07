@@ -117,6 +117,7 @@ async def book(session):
 
     return new_book
 
+
 @pytest_asyncio.fixture
 async def author(session):
     """
@@ -131,6 +132,7 @@ async def author(session):
     await session.refresh(new_author)
 
     return new_author
+
 
 @pytest.fixture
 def token(client, account):

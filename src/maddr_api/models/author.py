@@ -33,4 +33,6 @@ class Author:
         onupdate=func.now(),
     )
 
-    books: Mapped[list["Book"]] = relationship("Book", back_populates="author", init=False)
+    books: Mapped[list["Book"]] = relationship(
+        "Book", back_populates="author", init=False
+    )

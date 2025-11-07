@@ -26,3 +26,18 @@ async def create_author(
     current_user: Account = Depends(get_current_user),
 ) -> AuthorPublic:
     return await AuthorService(session).create_author(author_data)
+
+
+@router.get(
+    "/{author_id}",
+    summary="Get author by ID",
+    description="Retrieve author details by their ID.",
+    status_code=HTTPStatus.OK,
+    response_model=AuthorPublic,
+)
+async def read_author(
+    author_id: int,
+    session: Session,
+    current_user: Account = Depends(get_current_user),
+) -> AuthorPublic:
+    return await AuthorService(session).read_author(author_id)

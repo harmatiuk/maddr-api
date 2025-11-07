@@ -1,15 +1,7 @@
 from pydantic import BaseModel
 
 
-class AuthorBase(BaseModel):
-    """
-    Base schema for a author.
-    """
-
-    id: int
-
-
-class AuthorCreate(AuthorBase):
+class AuthorCreate(BaseModel):
     """
     Schema for creating a new author in the database.
     """
@@ -22,7 +14,7 @@ class AuthorPublic(AuthorCreate):
     Public representation of a author.
     """
 
-    pass
+    id: int
 
 
 class authorMessageResponse(BaseModel):
