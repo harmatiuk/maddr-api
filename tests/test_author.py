@@ -91,6 +91,60 @@ def test_read_author_not_found(client, token):
     assert response.json() == {"detail": "Author not found."}
 
 
+def test_update_author_success(client, token, author):
+    """
+    Test updating an existing author successfully.
+    """
+    headers = {"Authorization": f"Bearer {token}"}
+    updated_data = dict(
+        name="Updated Author Name",
+    )
+    response = client.patch(
+        f"/author/{author.id}", json=updated_data, headers=headers
+    )
+    expected_response = dict(
+        id=author.id,
+        name="updated author name",
+    )
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == expected_response
+
+
+def test_update_author_not_found(client, token):
+    """
+    Test updating a non-existing author.
+    """
+    headers = {"Authorization": f"Bearer {token}"}
+    updated_data = dict(
+        name="Non-existing Author",
+    )
+
+    response = client.patch("/author/999", json=updated_data, headers=headers)
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {"detail": "Author not found."}
+
+
+def test_update_author_with_existing_name(client, token, another_author):
+    """
+    Test updating an author with a name that already exists.
+    """
+    headers = {"Authorization": f"Bearer {token}"}
+
+    updated_data = dict(
+        name="Sample Author",
+    )
+
+    response = client.patch(
+        f"/author/{another_author.id}", json=updated_data, headers=headers
+    )
+
+    assert response.status_code == HTTPStatus.CONFLICT
+    assert response.json() == {
+        "detail": "An author with this name already exists."
+    }
+
+
 def test_delete_author_success(client, token, author):
     """
     Test deleting an existing author successfully.
