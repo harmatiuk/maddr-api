@@ -830,12 +830,4 @@ Contribuições são bem-vindas! Para contribuir:
 
 ---
 
-## ❓ Suporte
-
-Para dúvidas, problemas ou sugestões:
-- Abra uma [issue](link-para-issues)
-- Entre em contato: [seu-email]
-
----
-
 **Desenvolvido com ❤️ usando FastAPI**
