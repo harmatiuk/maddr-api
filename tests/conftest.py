@@ -134,6 +134,22 @@ async def author(session):
     return new_author
 
 
+@pytest_asyncio.fixture
+async def another_author(session, author):
+    """
+    Create another sample author for testing.
+    """
+
+    new_author = Author(
+        name=sanitization_string("Another Author"),
+    )
+    session.add(new_author)
+    await session.commit()
+    await session.refresh(new_author)
+
+    return new_author
+
+
 @pytest.fixture
 def token(client, account):
     """

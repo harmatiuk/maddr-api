@@ -47,6 +47,22 @@ async def read_author(
     return await AuthorService(session).read_author(author_id)
 
 
+@router.patch(
+    "/{author_id}",
+    summary="Update author by ID",
+    description="Update an author's details by their ID.",
+    status_code=HTTPStatus.OK,
+    response_model=AuthorPublic,
+)
+async def update_author(
+    author_id: int,
+    author_data: AuthorCreate,
+    session: Session,
+    current_user: Account = Depends(get_current_user),
+) -> AuthorPublic:
+    return await AuthorService(session).update_author(author_id, author_data)
+
+
 @router.delete(
     "/{author_id}",
     summary="Delete author by ID",

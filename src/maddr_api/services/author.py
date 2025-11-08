@@ -49,6 +49,39 @@ class AuthorService(BaseCRUD[Author, AuthorCreate]):
 
         return author
 
+    async def update_author(
+        self, author_id: int, author_data: AuthorCreate
+    ) -> Author:
+        """
+        Update an author by its ID.
+        """
+
+        check_author = await self.read(search_field="id", value=author_id)
+
+        if not check_author:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail="Author not found.",
+            )
+
+        author_data.name = sanitization_string(author_data.name)
+
+        existing_author = await self.read(
+            search_field="name", value=author_data.name
+        )
+
+        if existing_author and existing_author.id != author_id:
+            raise HTTPException(
+                status_code=HTTPStatus.CONFLICT,
+                detail="An author with this name already exists.",
+            )
+
+        return await self.update(
+            id_column="id",
+            value=author_id,
+            update_data=author_data,
+        )
+
     async def delete_author(self, author_id: int) -> AuthorMessageResponse:
         """
         Delete an author by its ID.
